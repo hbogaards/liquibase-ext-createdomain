@@ -1,0 +1,71 @@
+buildDir = 'target-gradle'
+
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'nl.anwb.hv.lib'
+version = '0.0.1-SNAPSHOT'
+
+repositories { 
+    // Use local Maven repo location. We don't need this if we only want to install
+    // an artifact, but we do need it if we want to use dependencies from the local
+    // repository.
+    mavenLocal()
+    maven { 
+        url "https://artifactory.anwb.loc/repo" 
+        name 'anwb-repository'
+    }
+    mavenCentral() 
+}
+
+dependencies { 
+    compile 'org.liquibase:liquibase-core:2.0.6-SNAPSHOT'
+}
+
+jar {
+    manifest {
+        attributes (provider: 'gradle', 'Liquibase-Package': 'nl.anwb.hv.lib.liquibase.ext')
+    }
+}
+
+buildscript {
+    repositories { 
+        mavenCentral() 
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.0'
+}
+
+task packageSources(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+task packageJavadoc(type: Jar, dependsOn: 'javadoc') {
+    from javadoc.destinationDir
+    classifier = 'javadoc'
+}
+
+artifacts {
+    archives (packageSources)
+    archives (packageJavadoc) 
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            name = 'anwb-releases'
+            repository(url: 'https://artifactory.anwb.loc/anwb-releases') {
+               authentication(userName: "hbogaards", password: "p31239n!")
+               snapshots(enabled: false)
+            }
+            snapshotRepository(url: 'https://artifactory.anwb.loc/anwb-snapshots') {
+               authentication(userName: "hbogaards", password: "p31239n!")
+               releases(enabled: false)
+            }
+        }
+    }
+}
+
