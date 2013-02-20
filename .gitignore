@@ -2,3 +2,5 @@
 .gradle
 .project
 .settings
+target/
+target-gradle/

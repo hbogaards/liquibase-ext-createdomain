@@ -4,7 +4,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 
 group = 'nl.anwb.hv.lib'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 
 repositories { 
     // Use local Maven repo location. We don't need this if we only want to install
@@ -35,7 +35,7 @@ buildscript {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.0'
+    gradleVersion = '1.4'
 }
 
 task packageSources(type: Jar) {
@@ -56,13 +56,13 @@ artifacts {
 uploadArchives {
     repositories {
         mavenDeployer {
-            name = 'anwb-releases'
-            repository(url: 'https://artifactory.anwb.loc/anwb-releases') {
-               authentication(userName: "hbogaards", password: "p31239n!")
+            name = 'releases'
+            repository(url: 'http://localhost:7080/archiva/repository/releases') {
+               authentication(userName: "admin", password: "adm1n")
                snapshots(enabled: false)
             }
-            snapshotRepository(url: 'https://artifactory.anwb.loc/anwb-snapshots') {
-               authentication(userName: "hbogaards", password: "p31239n!")
+            snapshotRepository(url: 'http://localhost:7080/archiva/repository/snapshots') {
+               authentication(userName: "admin", password: "adm1n")
                releases(enabled: false)
             }
         }
