@@ -4,7 +4,10 @@ apply plugin: 'java'
 apply plugin: 'maven'
 
 group = 'nl.anwb.hv.lib'
-version = '0.0.1'
+version = '0.0.2-SNAPSHOT'
+
+sourceCompatibility=1.6
+targetCompatibility=1.6
 
 repositories { 
     // Use local Maven repo location. We don't need this if we only want to install
@@ -32,10 +35,6 @@ buildscript {
     repositories { 
         mavenCentral() 
     }
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '1.4'
 }
 
 task packageSources(type: Jar) {
