@@ -42,7 +42,6 @@ public class DropDomainGenerator extends AbstractSqlGenerator<DropDomainStatemen
             };
     }
 
-    @SuppressWarnings("unused")
     private Sql[] generateSqlSybase(DropDomainStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
         List<Sql> sql = new ArrayList<Sql>();
 

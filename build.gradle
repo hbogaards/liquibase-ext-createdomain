@@ -15,8 +15,8 @@ repositories {
     // repository.
     mavenLocal()
     maven { 
-        url "https://artifactory.anwb.loc/repo" 
-        name 'anwb-repository'
+        url "https://nexus.anwb.local/content/groups/public" 
+        name 'nexus'
     }
     mavenCentral() 
 }
@@ -56,15 +56,14 @@ uploadArchives {
     repositories {
         mavenDeployer {
             name = 'releases'
-            repository(url: 'http://localhost:7080/archiva/repository/releases') {
-               authentication(userName: "admin", password: "adm1n")
+            repository(url: 'https://nexus.anwb.local/content/repositories/releases') {
+               authentication(userName: "disweg-jenkins", password: "xzbrfEzcYrHiEEifOePD")
                snapshots(enabled: false)
             }
-            snapshotRepository(url: 'http://localhost:7080/archiva/repository/snapshots') {
-               authentication(userName: "admin", password: "adm1n")
+            snapshotRepository(url: 'https://nexus.anwb.local/content/repositories/anwb-snapshots') {
+               authentication(userName: "disweg-jenkins", password: "xzbrfEzcYrHiEEifOePD")
                releases(enabled: false)
             }
         }
     }
 }
-
