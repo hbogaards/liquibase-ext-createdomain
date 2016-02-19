@@ -1,18 +1,28 @@
 buildDir = 'target-gradle'
 
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven {
+            url 'https://plugins.gradle.org/m2/'
+        }
+    }
+    dependencies {
+        classpath 'net.researchgate:gradle-release:2.3.4'
+    }
+}
+
 apply plugin: 'java'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'net.researchgate.release'
 
 group = 'nl.anwb.hv.lib'
-version = '0.0.2-SNAPSHOT'
 
 sourceCompatibility=1.6
 targetCompatibility=1.6
 
 repositories { 
-    // Use local Maven repo location. We don't need this if we only want to install
-    // an artifact, but we do need it if we want to use dependencies from the local
-    // repository.
     mavenLocal()
     maven { 
         url "https://nexus.anwb.local/content/groups/public" 
@@ -31,38 +41,50 @@ jar {
     }
 }
 
-buildscript {
-    repositories { 
-        mavenCentral() 
-    }
-}
-
-task packageSources(type: Jar) {
+task sourcesJar(type: Jar) {
+    group 'Build'
+    description 'An archive of the source code'
+    classifier 'sources'
     from sourceSets.main.allSource
-    classifier = 'sources'
 }
 
-task packageJavadoc(type: Jar, dependsOn: 'javadoc') {
+task javadocJar(type: Jar, dependsOn: 'javadoc') {
     from javadoc.destinationDir
     classifier = 'javadoc'
 }
 
+jar.finalizedBy sourcesJar
+
 artifacts {
-    archives (packageSources)
-    archives (packageJavadoc) 
+    sourcesJar
+    javadocJar
 }
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            name = 'releases'
-            repository(url: 'https://nexus.anwb.local/content/repositories/releases') {
-               authentication(userName: "disweg-jenkins", password: "xzbrfEzcYrHiEEifOePD")
-               snapshots(enabled: false)
+task wrapper(type: Wrapper) {
+    gradleVersion = gradleWrapperVersion
+}
+
+release {
+    tagTemplate = '${name}-${version}'
+
+    git {
+        requireBranch = 'master'
+        pushToRemote = 'origin'
+        pushToBranchPrefix = ''
+        commitVersionFileOnly = false
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourcesJar {
+                classifier 'sources'
             }
-            snapshotRepository(url: 'https://nexus.anwb.local/content/repositories/anwb-snapshots') {
-               authentication(userName: "disweg-jenkins", password: "xzbrfEzcYrHiEEifOePD")
-               releases(enabled: false)
+            artifact javadocJar {
+                classifier 'javadoc'
             }
         }
     }
