@@ -67,13 +67,15 @@ task wrapper(type: Wrapper) {
 release {
     tagTemplate = '${name}-${version}'
     failOnSnapshotDependencies = false
-    
+
     git {
         requireBranch = 'master'
         pushToRemote = 'origin'
         pushToBranchPrefix = ''
     }
 }
+
+afterReleaseBuild.dependsOn uploadArchives
 
 publishing {
     publications {
