@@ -5,13 +5,14 @@ import java.util.List;
 
 import liquibase.database.Database;
 import liquibase.database.core.SybaseDatabase;
-import liquibase.database.typeconversion.TypeConverterFactory;
+import liquibase.datatype.DataTypeFactory;
 import liquibase.exception.ValidationErrors;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.sqlgenerator.core.AbstractSqlGenerator;
 
+import liquibase.structure.core.Table;
 import nl.anwb.hv.lib.liquibase.ext.createdomain.statement.CreateDomainStatement;
 
 public class CreateDomainGenerator extends AbstractSqlGenerator<CreateDomainStatement> {
@@ -43,14 +44,14 @@ public class CreateDomainGenerator extends AbstractSqlGenerator<CreateDomainStat
         if (statement.isIfNotExists()) {
             createBuilder.append("IF NOT EXISTS ");
         }
-        createBuilder.append(database.escapeDatabaseObject(statement.getDomainName()));
+        createBuilder.append(database.escapeObjectName(statement.getDomainName(), Table.class));
         createBuilder.append(" AS ");
-        createBuilder.append(TypeConverterFactory.getInstance().findTypeConverter(database).getDataType(statement.getDataType(), false));
+        createBuilder.append(DataTypeFactory.getInstance().fromDescription(statement.getDataType(), database));
 
         Object defaultValue = statement.getDefaultValue();
         if (defaultValue != null) {
             createBuilder.append(" DEFAULT ");
-            createBuilder.append(TypeConverterFactory.getInstance().findTypeConverter(database).getDataType(defaultValue).convertObjectToString(defaultValue, database));
+            createBuilder.append(DataTypeFactory.getInstance().fromObject(defaultValue, database));
         }
         if (!statement.isNullable()) {
             createBuilder.append(" NOT NULL");
@@ -99,7 +100,7 @@ public class CreateDomainGenerator extends AbstractSqlGenerator<CreateDomainStat
             defaultBuilder.append("dflt_");
             defaultBuilder.append(statement.getDomainName());
             defaultBuilder.append(" AS ");
-            defaultBuilder.append(TypeConverterFactory.getInstance().findTypeConverter(database).getDataType(defaultValue).convertObjectToString(defaultValue, database));
+            defaultBuilder.append(DataTypeFactory.getInstance().fromObject(defaultValue, database));
 
             sql.add(new UnparsedSql(defaultBuilder.toString()));
         }

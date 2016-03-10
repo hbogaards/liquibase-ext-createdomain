@@ -2,18 +2,19 @@ package nl.anwb.hv.lib.liquibase.ext.createdomain.change;
 
 import liquibase.change.AbstractChange;
 import liquibase.change.ChangeMetaData;
+import liquibase.change.DatabaseChange;
 import liquibase.database.Database;
 import liquibase.statement.SqlStatement;
 import liquibase.util.StringUtils;
 import nl.anwb.hv.lib.liquibase.ext.createdomain.statement.DropDomainStatement;
 
+@DatabaseChange(name="dropDomain", description = "Drop Domain", priority = ChangeMetaData.PRIORITY_DEFAULT)
 public class DropDomainChange extends AbstractChange {
     
     private String schemaName;
     private String domainName;
 
     public DropDomainChange() {
-        super("dropDomain", "Drop Domain", ChangeMetaData.PRIORITY_DEFAULT);
     }
 
     public String getSchemaName() {

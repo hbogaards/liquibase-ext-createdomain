@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import liquibase.change.DatabaseChange;
 import nl.anwb.hv.lib.liquibase.ext.createdomain.statement.CreateDomainStatement;
 
 import liquibase.change.AbstractChange;
@@ -17,6 +18,7 @@ import liquibase.statement.SqlStatement;
 import liquibase.util.ISODateFormat;
 import liquibase.util.StringUtils;
 
+@DatabaseChange(name="createDomain", description = "Create Domain", priority = ChangeMetaData.PRIORITY_DEFAULT)
 public class CreateDomainChange extends AbstractChange {
     
     private String schemaName;
@@ -32,7 +34,6 @@ public class CreateDomainChange extends AbstractChange {
     private DatabaseFunction defaultValueComputed;
 
     public CreateDomainChange() {
-        super("createDomain", "Create Domain", ChangeMetaData.PRIORITY_DEFAULT);
     }
 
     public String getSchemaName() {
@@ -163,22 +164,28 @@ public class CreateDomainChange extends AbstractChange {
 
         if (getDefaultValue() != null) {
             defaultVal = getDefaultValue();
-        } else if (getDefaultValueBoolean() != null) {
+        }
+        else if (getDefaultValueBoolean() != null) {
             defaultVal = Boolean.valueOf(getDefaultValueBoolean());
-        } else if (getDefaultValueNumeric() != null) {
+        }
+        else if (getDefaultValueNumeric() != null) {
             try {
                 defaultVal = NumberFormat.getInstance(Locale.US).
                     parse(getDefaultValueNumeric()); 
-            } catch (ParseException e) {
+            }
+            catch (ParseException e) {
                 defaultVal = new DatabaseFunction(getDefaultValueNumeric());
             }
-        } else if (getDefaultValueDate() != null) {
+        }
+        else if (getDefaultValueDate() != null) {
             try {
                 defaultVal = new ISODateFormat().parse(getDefaultValueDate());
-            } catch (ParseException e) {
+            }
+            catch (ParseException e) {
                 defaultVal = new DatabaseFunction(getDefaultValueDate());
             }
-        } else if (getDefaultValueComputed() != null) {
+        }
+        else if (getDefaultValueComputed() != null) {
             defaultVal = getDefaultValueComputed();
         }
         

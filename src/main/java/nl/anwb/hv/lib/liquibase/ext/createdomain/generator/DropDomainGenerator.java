@@ -11,6 +11,7 @@ import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.sqlgenerator.core.AbstractSqlGenerator;
 
+import liquibase.structure.core.Table;
 import nl.anwb.hv.lib.liquibase.ext.createdomain.statement.DropDomainStatement;
 
 public class DropDomainGenerator extends AbstractSqlGenerator<DropDomainStatement> {
@@ -34,7 +35,7 @@ public class DropDomainGenerator extends AbstractSqlGenerator<DropDomainStatemen
         StringBuilder createBuilder = new StringBuilder();
 
         createBuilder.append("DROP DOMAIN ");
-        createBuilder.append(database.escapeDatabaseObject(statement.getDomainName()));
+        createBuilder.append(database.escapeObjectName(statement.getDomainName(), Table.class));
 
         return new Sql[]
             {
