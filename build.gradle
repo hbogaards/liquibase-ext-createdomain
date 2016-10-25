@@ -24,14 +24,14 @@ targetCompatibility=1.6
 repositories { 
     mavenLocal()
     maven { 
-        url "https://nexus.anwb.local/content/groups/public" 
+        url "https://nexus.anwb.nl/content/groups/public"
         name 'nexus'
     }
     jcenter()
 }
 
 dependencies { 
-    compile 'org.liquibase:liquibase-core:3.3.0'
+    compile 'org.liquibase:liquibase-core:3.3.5'
 }
 
 jar {

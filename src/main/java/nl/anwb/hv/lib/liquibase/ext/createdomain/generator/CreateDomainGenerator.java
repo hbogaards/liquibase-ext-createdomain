@@ -46,12 +46,12 @@ public class CreateDomainGenerator extends AbstractSqlGenerator<CreateDomainStat
         }
         createBuilder.append(database.escapeObjectName(statement.getDomainName(), Table.class));
         createBuilder.append(" AS ");
-        createBuilder.append(DataTypeFactory.getInstance().fromDescription(statement.getDataType(), database));
+        createBuilder.append(DataTypeFactory.getInstance().fromDescription(statement.getDataType(), database).toDatabaseDataType(database));
 
         Object defaultValue = statement.getDefaultValue();
         if (defaultValue != null) {
             createBuilder.append(" DEFAULT ");
-            createBuilder.append(DataTypeFactory.getInstance().fromObject(defaultValue, database));
+            createBuilder.append(DataTypeFactory.getInstance().fromObject(defaultValue, database).objectToSql(defaultValue, database));
         }
         if (!statement.isNullable()) {
             createBuilder.append(" NOT NULL");
@@ -100,7 +100,7 @@ public class CreateDomainGenerator extends AbstractSqlGenerator<CreateDomainStat
             defaultBuilder.append("dflt_");
             defaultBuilder.append(statement.getDomainName());
             defaultBuilder.append(" AS ");
-            defaultBuilder.append(DataTypeFactory.getInstance().fromObject(defaultValue, database));
+            defaultBuilder.append(DataTypeFactory.getInstance().fromObject(defaultValue, database).objectToSql(defaultValue, database));
 
             sql.add(new UnparsedSql(defaultBuilder.toString()));
         }
