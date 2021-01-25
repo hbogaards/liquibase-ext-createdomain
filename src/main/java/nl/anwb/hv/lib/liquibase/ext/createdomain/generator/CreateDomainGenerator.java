@@ -79,6 +79,11 @@ public class CreateDomainGenerator extends AbstractSqlGenerator<CreateDomainStat
 
             StringBuilder ruleBuilder = new StringBuilder();
 
+            if (statement.isIfNotExists()) {
+                ruleBuilder.append("IF NOT EXISTS (SELECT 1 FROM sysobjects where name ='");
+                ruleBuilder.append("rl_").append(statement.getDomainName()).append("' and type = 'R') ");
+                ruleBuilder.append("EXECUTE(\"");
+            }
             ruleBuilder.append("CREATE RULE ");
             ruleBuilder.append("rl_");
             ruleBuilder.append(statement.getDomainName());
@@ -86,6 +91,9 @@ public class CreateDomainGenerator extends AbstractSqlGenerator<CreateDomainStat
 
             String rule = statement.getCheck().replaceAll("value", "@value");
             ruleBuilder.append(rule);
+            if (statement.isIfNotExists()) {
+                ruleBuilder.append("\")");
+            }
 
             sql.add(new UnparsedSql(ruleBuilder.toString()));
         }
@@ -96,11 +104,18 @@ public class CreateDomainGenerator extends AbstractSqlGenerator<CreateDomainStat
 
             StringBuilder defaultBuilder = new StringBuilder();
 
+            if (statement.isIfNotExists()) {
+                defaultBuilder.append("IF NOT EXISTS (SELECT 1 FROM sysobjects where name ='");
+                defaultBuilder.append("dflt_").append(statement.getDomainName()).append("' and type = 'D') ");
+                defaultBuilder.append("EXECUTE(\"");
+            }
             defaultBuilder.append("CREATE DEFAULT ");
-            defaultBuilder.append("dflt_");
-            defaultBuilder.append(statement.getDomainName());
+            defaultBuilder.append("dflt_").append(statement.getDomainName());
             defaultBuilder.append(" AS ");
             defaultBuilder.append(DataTypeFactory.getInstance().fromObject(defaultValue, database).objectToSql(defaultValue, database));
+            if (statement.isIfNotExists()) {
+                defaultBuilder.append("\")");
+            }
 
             sql.add(new UnparsedSql(defaultBuilder.toString()));
         }
